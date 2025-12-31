@@ -318,7 +318,9 @@
 
     <script>
         const targetTime = new Date();
-targetTime.setHours(24, 0, 0, 0);   // 12:00 AM (midnight)
+        // Target 12 AM (Midnight)
+        if (targetTime.getHours() >= 0) { targetTime.setDate(targetTime.getDate() + 1); }
+        targetTime.setHours(0, 0, 0, 0); 
 
         const baseImgUrl = "https://raw.githubusercontent.com/PromitDutta1/New_Year_Special/main/Images/";
         const memories = [
