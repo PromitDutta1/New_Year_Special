@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy New Year, My Love</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:ital,wght@0,700;1,700&family=Poppins:wght@300;400;600&display=swap');
+
+        :root {
+            --bg-color: #fffafb;
+            --cake-pink: #ff85a1;
+            --cake-dark: #f06292;
+            --cream: #ffffff;
+            --gold: #d4af37;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            touch-action: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .romantic-font { font-family: 'Dancing Script', cursive; }
+        .serif-font { font-family: 'Playfair Display', serif; }
+
+        /* --- GUIDED INSTRUCTION BANNER --- */
+        .instruction-banner {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid var(--cake-pink);
+            padding: 12px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(255, 133, 161, 0.2);
+            text-align: center;
+            margin-bottom: 20px;
+            z-index: 100;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+
+        /* --- MASTER SCOREBOARD --- */
+        .master-scoreboard {
+            position: fixed; top: 15px; right: 15px; z-index: 500;
+            background: white; border: 2px solid #ff85a1; border-radius: 20px;
+            padding: 10px 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex; flex-direction: column; gap: 5px;
+        }
+
+        /* --- ENVELOPE --- */
+        .envelope {
+            width: 300px; height: 200px; background: #ffb3c1; position: relative;
+            box-shadow: 0 15px 35px rgba(255, 137, 163, 0.3); cursor: pointer; border-radius: 4px;
+        }
+        .envelope::before {
+            content: ""; position: absolute; top: 0; z-index: 4;
+            border-left: 150px solid transparent; border-right: 150px solid transparent;
+            border-top: 110px solid #ff8fa3; transform-origin: top;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .envelope.open::before { transform: rotateX(180deg); z-index: 0; }
+        .letter {
+            position: absolute; bottom: 10px; left: 15px; width: 270px; height: 180px;
+            background: white; z-index: 1; transition: transform 0.8s 0.8s;
+            display: flex; align-items: center; justify-content: center;
+            padding: 25px; text-align: center;
+        }
+        .envelope.open .letter { transform: translateY(-130px); }
+
+        /* --- CAKE --- */
+        .cake-body {
+            position: relative; width: 280px; height: 160px;
+            background: linear-gradient(to right, var(--cake-dark), var(--cake-pink), var(--cake-dark));
+            border-radius: 120px / 40px; box-shadow: 0 10px 0 #e91e63;
+        }
+        .cake-body::after {
+            content: ""; position: absolute; top: -20px; left: 0; width: 280px; height: 80px;
+            background: var(--cream); border-radius: 120px / 40px; z-index: 2;
+        }
+        .main-cake.cut { clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%); transform: translateX(-20px) rotate(-2deg); }
+        .cake-slice { position: absolute; top: 0; left: 0; width: 280px; height: 160px; display: none; z-index: 6; transition: all 0.4s; }
+        .main-cake.cut + .cake-slice { display: block; clip-path: polygon(50% 0, 100% 0, 100% 100%, 50% 100%); transform: translateX(20px) rotate(2deg); }
+        .bite-1 { clip-path: polygon(50% 0, 80% 0, 75% 10%, 85% 20%, 80% 30%, 95% 40%, 100% 50%, 100% 100%, 50% 100%) !important; }
+        .bite-2 { clip-path: polygon(50% 0, 65% 0, 60% 15%, 75% 30%, 65% 45%, 80% 60%, 85% 100%, 50% 100%) !important; }
+        .bite-3 { clip-path: polygon(50% 0, 55% 10%, 50% 25%, 60% 40%, 50% 55%, 55% 75%, 50% 100%) !important; }
+        .bite-4 { opacity: 0; transform: translate(40px, 10px) scale(0.5) !important; pointer-events: none; }
+
+        /* --- CAROUSEL --- */
+        .carousel-scene { width: 300px; height: 420px; perspective: 1200px; margin: 40px auto; position: relative; }
+        .carousel-container { width: 100%; height: 100%; position: absolute; transform-style: preserve-3d; transition: transform 1s cubic-bezier(0.23, 1, 0.32, 1); }
+        .carousel-item {
+            position: absolute; width: 260px; height: 420px; left: 20px; top: 0; background: white; border-radius: 12px;
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); backface-visibility: hidden;
+            display: flex; flex-direction: column; border: 5px solid white;
+        }
+        .carousel-item img { width: 100%; height: 200px; object-fit: cover; }
+        .carousel-item .text-container { flex: 1; overflow-y: auto; padding: 10px; background: #fff; }
+
+        /* --- SLAP GAME --- */
+        .slap-boy { font-size: 140px; transition: all 0.2s; cursor: pointer; user-select: none; }
+        .injured-3 { filter: sepia(1) saturate(5) hue-rotate(-60deg) grayscale(0.3); transform: rotate(10deg); }
+
+        /* --- HUGE CONTROLLER --- */
+        #cuddle-canvas { background: #fff0f3; display: block; margin: 0 auto; border-radius: 15px; border: 2px solid #ffccd5; }
+        .huge-d-pad { 
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); 
+            display: grid; grid-template-columns: repeat(3, 100px); grid-template-rows: repeat(2, 100px); 
+            gap: 20px; z-index: 100; 
+        }
+        .huge-btn { 
+            background: white; border: 4px solid #ff85a1; border-radius: 20px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 45px; color: #ff85a1; width: 100px; height: 100px; 
+            box-shadow: 0 10px 0 #ff85a1; transition: transform 0.1s;
+        }
+        .huge-btn:active { transform: translateY(8px); box-shadow: 0 2px 0 #ff85a1; }
+
+        /* --- RING BOX --- */
+        .ring-box-container {
+            width: 150px; height: 150px; position: relative; cursor: pointer;
+            perspective: 1000px; margin: 30px auto;
+        }
+        .box-lid {
+            width: 100%; height: 50%; background: #8e1a1a;
+            position: absolute; top: 0; border-radius: 10px 10px 0 0;
+            transform-origin: bottom; transition: transform 0.8s; z-index: 2;
+        }
+        .box-bottom {
+            width: 100%; height: 50%; background: #630a0a;
+            position: absolute; bottom: 0; border-radius: 0 0 10px 10px; z-index: 1;
+        }
+        .ring-inside {
+            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) scale(0);
+            font-size: 75px; transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5;
+            cursor: pointer;
+        }
+        .box-open .box-lid { transform: rotateX(-110deg); }
+        .box-open .ring-inside { transform: translate(-50%, -80%) scale(1); filter: drop-shadow(0 0 15px gold); }
+
+        /* --- UI POPUPS --- */
+        .popup {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
+            background: white; padding: 30px; border-radius: 30px; text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3); z-index: 200; opacity: 0; pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 85%; max-width: 400px;
+        }
+        .popup-show { opacity: 1 !important; transform: translate(-50%, -50%) scale(1) !important; pointer-events: auto !important; }
+        .spending-emoji { position: fixed; font-size: 30px; z-index: 600; pointer-events: none; transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .shake { animation: shake 0.5s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+        .slap-vfx { animation: slapVFX 0.15s; }
+        @keyframes slapVFX { 0% { transform: scale(1); } 50% { transform: scale(1.3) rotate(-15deg); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body class="bg-pink-50">
+
+    <!-- AUDIO ELEMENTS -->
+    <audio id="song1" loop>
+      <source src="https://raw.githubusercontent.com/PromitDutta1/New_Year_Special/main/Songs/1.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="song2" loop>
+      <source src="https://raw.githubusercontent.com/PromitDutta1/New_Year_Special/main/Songs/2.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- MASTER SCOREBOARD -->
+    <div id="master-scoreboard" class="hidden master-scoreboard">
+        <div class="flex justify-between gap-4">
+            <span class="font-bold text-pink-500">💋 Kiss:</span>
+            <span id="score-kiss" class="font-bold text-gray-700">0</span>
+        </div>
+        <div class="flex justify-between gap-4">
+            <span class="font-bold text-purple-500">🫂 Hug:</span>
+            <span id="score-hug" class="font-bold text-gray-700">0</span>
+        </div>
+    </div>
+
+    <!-- SCREEN 1: TIMER -->
+    <div id="screen-countdown" class="flex flex-col items-center justify-center min-h-screen p-6 w-full transition-opacity duration-1000">
+        <div class="instruction-banner">
+            <p class="text-pink-600 font-bold serif-font italic text-sm">Wait for the timer to hit 0, then tap the envelope! 💌</p>
+        </div>
+        <div class="text-center mb-12">
+            <h1 class="serif-font text-3xl text-gray-800 mb-2">My New Year Gift</h1>
+            <div id="timer" class="text-6xl font-bold text-pink-500 romantic-font tracking-widest">00:00:00</div>
+        </div>
+        <div class="envelope" id="envelope-body" onclick="openEnvelope()">
+            <div class="letter"><p class="romantic-font text-3xl text-pink-600">Happy New Year! ❤️</p></div>
+        </div>
+        <p id="instruction" class="mt-12 text-pink-400 font-medium italic text-sm">Unlocked at 10:55 PM</p>
+    </div>
+
+    <!-- SCREEN 2: CAKE -->
+    <div id="screen-cake" class="hidden flex-col items-center justify-start min-h-screen pt-12 p-6 w-full opacity-0 transition-opacity duration-1000">
+        <div class="instruction-banner">
+            <p id="cake-main-instruction" class="text-pink-600 font-bold serif-font italic">Tap on the candles to blow them out! 🕯️</p>
+        </div>
+        <div class="cake-area relative mt-16">
+            <div class="flex justify-center gap-6 absolute -top-12 w-full z-10" id="candles-row">
+                <div class="candle w-[10px] h-[50px] relative" onclick="extinguish(this)" style="background: repeating-linear-gradient(45deg, #fff, #fff 5px, #ff8fa3 5px, #ff8fa3 10px); cursor:pointer;">
+                    <div class="flame absolute -top-4 left-1/2 -translate-x-1/2 w-3 h-5 bg-orange-400 rounded-full animate-pulse"></div>
+                </div>
+                <div class="candle w-[10px] h-[50px] relative" onclick="extinguish(this)" style="background: repeating-linear-gradient(45deg, #fff, #fff 5px, #ff8fa3 5px, #ff8fa3 10px); cursor:pointer;">
+                    <div class="flame absolute -top-4 left-1/2 -translate-x-1/2 w-3 h-5 bg-orange-400 rounded-full animate-pulse"></div>
+                </div>
+                <div class="candle w-[10px] h-[50px] relative" onclick="extinguish(this)" style="background: repeating-linear-gradient(45deg, #fff, #fff 5px, #ff8fa3 5px, #ff8fa3 10px); cursor:pointer;">
+                    <div class="flame absolute -top-4 left-1/2 -translate-x-1/2 w-3 h-5 bg-orange-400 rounded-full animate-pulse"></div>
+                </div>
+            </div>
+            <div class="main-cake cake-body" id="main-cake" onclick="handleCakeInteraction()"></div>
+            <div class="cake-slice cake-body" id="cake-slice" onclick="handleCakeInteraction()"></div>
+        </div>
+        <div id="post-cake-container" class="mt-20 text-center opacity-0 transition-opacity duration-500">
+            <button onclick="showMemoriesPage()" class="bg-pink-500 text-white px-8 py-4 rounded-full font-bold shadow-lg">Our Memories 2025 ✨</button>
+        </div>
+    </div>
+
+    <!-- SCREEN 3: CAROUSEL -->
+    <div id="screen-memories" class="hidden flex-col items-center justify-center min-h-screen p-6 w-full overflow-hidden">
+        <div class="instruction-banner">
+            <p class="text-pink-600 font-bold serif-font italic text-sm">Tap the arrows to spin our memories circle! 🎡</p>
+        </div>
+        <div class="carousel-scene"><div class="carousel-container" id="carousel"></div></div>
+        <div class="flex gap-12 mt-4 items-center">
+            <button onclick="rotateCarousel(-1)" class="bg-pink-400 text-white w-12 h-12 rounded-full shadow-lg">←</button>
+            <span class="font-bold text-pink-400" id="slide-count">1 / 6</span>
+            <button onclick="rotateCarousel(1)" class="bg-pink-400 text-white w-12 h-12 rounded-full shadow-lg">→</button>
+        </div>
+    </div>
+
+    <!-- SCREEN 4: KISS GAME -->
+    <div id="screen-kiss-game" class="hidden w-full h-screen relative bg-pink-50 overflow-hidden">
+        <div class="absolute top-10 left-1/2 -translate-x-1/2 text-8xl">👦🏻</div>
+        <div class="absolute top-36 left-0 w-full flex justify-center px-4">
+            <div class="instruction-banner">
+                <p class="text-pink-600 font-bold serif-font italic text-sm">Slide the glass to collect 100 kisses! 💋</p>
+            </div>
+        </div>
+        <div id="glass" style="position: absolute; bottom: 100px; width: 100px; height: 110px; border: 4px solid #ff85a1; border-top: none; border-radius: 0 0 25px 25px; background: rgba(255, 255, 255, 0.4); left: calc(50% - 50px);"></div>
+    </div>
+
+    <!-- SCREEN 5: CUDDLE GAME -->
+    <div id="screen-cuddle-game" class="hidden flex-col items-center justify-start h-screen w-full bg-pink-50 overflow-hidden pt-10">
+        <div class="instruction-banner">
+            <p class="text-pink-600 font-bold serif-font italic text-sm">Use the big buttons to help the cat catch 100 hugs! 🐱</p>
+        </div>
+        <canvas id="cuddle-canvas" class="bg-white rounded-lg mt-4"></canvas>
+        <div class="huge-d-pad">
+            <div class="col-start-2 huge-btn" onclick="setCuddleDir('UP')">▲</div>
+            <div class="row-start-2 huge-btn" onclick="setCuddleDir('LEFT')">◀</div>
+            <div class="row-start-2 huge-btn" onclick="setCuddleDir('DOWN')">▼</div>
+            <div class="row-start-2 huge-btn" onclick="setCuddleDir('RIGHT')">▶</div>
+        </div>
+    </div>
+
+    <!-- SCREEN 6: SLAP GAME -->
+    <div id="screen-slap-game" class="hidden flex-col items-center justify-center h-screen bg-pink-100 p-8">
+        <div class="instruction-banner mb-10">
+            <p id="slap-instruction-text" class="text-pink-600 font-bold serif-font italic text-sm">Tap the boy to slap him! 👋 (3 free slaps)</p>
+        </div>
+        <div id="target-boy" class="slap-boy" onclick="processSlap()">😊</div>
+        <div class="mt-16 text-pink-400 font-bold italic text-2xl">Slaps: <span id="slap-display-count">0</span> / 3 Free</div>
+    </div>
+
+    <!-- SCREEN 7: FINAL SPECIAL SCREEN -->
+    <div id="screen-final-surprise" class="hidden flex-col items-center justify-center min-h-screen p-8 text-center bg-white opacity-0 transition-opacity duration-1000 overflow-y-auto">
+        <div id="gift-initial" class="flex flex-col items-center w-full">
+            <div class="text-9xl mb-8">💐</div>
+            <h2 class="romantic-font text-4xl text-pink-600 mb-8 text-center">Something special for my Queen</h2>
+            <div class="ring-box-container" id="ring-box" onclick="revealRing()">
+                <div class="box-lid"></div>
+                <div class="box-bottom"></div>
+                <div class="ring-inside" id="the-ring" onclick="showLetter(event)">💍</div>
+            </div>
+            <p id="final-instruction" class="text-pink-600 font-bold serif-font italic animate-bounce mt-4 bg-pink-50 px-6 py-2 rounded-full border border-pink-200">Tap the box to open it... 🎁</p>
+        </div>
+
+        <div id="letter-reveal" class="hidden flex-col items-center mt-4 w-full">
+            <div class="bg-pink-50 p-8 rounded-2xl border-2 border-pink-200 shadow-inner max-w-md w-full">
+                <h3 class="romantic-font text-4xl text-pink-600 mb-4 text-center">My Dearest Love,</h3>
+                <p class="serif-font italic text-gray-700 text-[11px] leading-tight text-center">
+                    "2025 was beautiful because I had you. Every moment we shared made me realize that you are my everything. As we step into 2026, I promise to love you more, support you always, and cherish every single smile of yours. You are my home. Happy New Year!"
+                </p>
+                <p class="romantic-font text-3xl text-pink-500 mt-6 text-center">Forever Yours. ❤️</p>
+            </div>
+            <button onclick="location.reload()" class="mt-12 bg-pink-500 text-white px-8 py-4 rounded-full font-bold shadow-lg hover:scale-105 transition-transform mb-10">Restart Again 🔄</button>
+        </div>
+    </div>
+
+    <!-- POPUPS -->
+    <div id="kiss-win-popup" class="popup">
+        <h3 class="romantic-font text-3xl text-pink-600 mb-2">100 Kisses!</h3>
+        <div class="flex flex-col gap-3">
+            <button onclick="resetKissGame()" class="bg-white border-2 border-pink-500 text-pink-500 px-6 py-3 rounded-full font-bold">Collect Kisses Again 💋</button>
+            <button onclick="goToCuddleGame()" class="bg-pink-500 text-white px-6 py-3 rounded-full font-bold shadow-lg">Move to Cuddle Game 🐱</button>
+        </div>
+    </div>
+
+    <div id="cuddle-win-popup" class="popup">
+        <h3 class="romantic-font text-3xl text-pink-600 mb-2">100 Cuddles!</h3>
+        <div class="flex flex-col gap-3">
+            <button onclick="resetCuddleGame()" class="bg-white border-2 border-pink-500 text-pink-500 px-6 py-3 rounded-full font-bold">Collect Hugs Again 🫂</button>
+            <button onclick="goToSlapGame()" class="bg-pink-500 text-white px-6 py-3 rounded-full font-bold shadow-lg">Move to Slap Game 🎮</button>
+        </div>
+    </div>
+
+    <div id="slap-popup" class="popup">
+        <h3 class="romantic-font text-2xl text-pink-600 mb-2">He is fully injured!</h3>
+        <p class="text-gray-600 mb-6 italic">Spend 10 Kisses 💋 & 10 Hugs 🫂 to heal him!</p>
+        <div class="flex flex-col gap-3">
+            <button onclick="payDualHealing()" class="bg-white border-2 border-pink-500 text-pink-500 px-6 py-3 rounded-full font-bold">Give 10 Kiss & 10 Hug ❤️</button>
+            <button onclick="goToFinalSurprise()" class="bg-pink-500 text-white px-6 py-3 rounded-full font-bold shadow-lg">Something Special for You ✨</button>
+        </div>
+    </div>
+
+    <script>
+        const targetTime = new Date();
+        // UPDATED TIMER TO 10:55 PM (22:55)
+        targetTime.setHours(22, 55, 0, 0); 
+
+        const baseImgUrl = "https://raw.githubusercontent.com/PromitDutta1/New_Year_Special/main/Images/";
+        const memories = [
+            {
+                url: baseImgUrl + "img1.jpg",
+                text: `💙 “10 September 2025 — The day my world paused for you.”
+Under the soft blue glow of the city, I found my favorite place in the universe — right beside you.
+The lights were bright, the world was busy, yet everything felt calm… because your hand was in mine.
+Your smile didn’t just light up the frame — it lit up me.
+In that moment I realized, love isn’t something you search for… it’s something that stands next to you, looks into your eyes, and makes the whole city disappear.
+Every picture fades with time, but this feeling… this love… this us… will stay forever in my heart.
+My girl. My peace. My home. 💫❤️`
+            },
+            {
+                url: baseImgUrl + "img2.jpg",
+                text: `🌙 “11 September 2025 — I fell in love all over again.”
+I got lost in your eyes today… not for a moment, but for forever.
+There is something in your gaze that the world will never understand — a quiet magic that calms my storms and sets my heart on fire at the same time.
+No noise, no crowd, no distance… just you, and the way your eyes speak the language of my soul.
+Every heartbeat whispered your name. Every thought became us.
+If love had a face, it would look exactly like this moment. Exactly like you. 💞`
+            },
+            {
+                url: baseImgUrl + "img3.jpg",
+                text: `🪞 “13 September 2025 — In your arms, I found forever.”
+In this quiet moment between reflections and reality, I discovered what home truly means.
+Not a place. Not a time. But you — standing behind me, holding me as if the whole world could disappear and nothing would be lost.
+Your heartbeat against my back, your hands around mine, your presence wrapping me in a peace I never knew I needed… this is love in its purest form.
+Every mirror should reflect a moment like this — two souls choosing each other, silently, completely, endlessly.
+If I have one wish for every tomorrow, it is simply this: let me always stand here, in your arms.💙💙`
+            },
+            {
+                url: baseImgUrl + "img4.jpg",
+                text: `🌸 “20 September 2025 — My heart chose you, again and again.”
+Among all the colors of this day, you were the one that made everything beautiful.
+The world felt brighter when you stood beside me, draped in grace, glowing in love, smiling like you knew… you already owned my heart.
+The way you leaned into me, the quiet smile you wore, the warmth of your presence — this is what forever feels like.
+If every chapter of my life looked like this moment, I would read my story a thousand times and still fall in love with you in every line.
+My today. My tomorrow. My always. ✨💞`
+            },
+            {
+                url: baseImgUrl + "img5.jpg",
+                text: `✨ “25 September 2025 — Love found its way back to me… in your eyes.”
+In a world full of noise and rush, this moment was soft, slow, and perfect.
+Your eyes met mine, and suddenly everything made sense — every heartbeat, every dream, every road that led me here.
+The way you hold me, the way I look at you, the way our souls seem to recognize each other… this is not just love — this is home.
+If time ever tries to steal this moment, my heart will keep it safe forever.
+Because loving you feels like the one thing I was always meant to do. 💫❤️`
+            },
+            { isGame: true }
+        ];
+
+        let kissScore = 0, hugScore = 0, slapCount = 0, biteCount = 0, candlesBlown = 0, cakeIsCut = false, rotationAngle = 0;
+        let isLocked = true;
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = targetTime - now;
+            if (diff <= 0) { document.getElementById('timer').innerText = "OPEN NOW! ❤️"; isLocked = false; return; }
+            const hours = Math.floor((diff % 86400000) / 3600000).toString().padStart(2, '0');
+            const mins = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+            const secs = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+            document.getElementById('timer').innerText = `${hours}:${mins}:${secs}`;
+            requestAnimationFrame(updateTimer);
+        }
+        updateTimer();
+
+        function openEnvelope() {
+            if (isLocked) { 
+                const env = document.getElementById('envelope-body');
+                env.classList.add('shake'); 
+                setTimeout(() => env.classList.remove('shake'), 500); 
+                return; 
+            }
+            document.getElementById("song1").play();
+            document.getElementById('envelope-body').classList.add('open');
+            setTimeout(() => {
+                document.getElementById('screen-countdown').style.display = 'none';
+                const s2 = document.getElementById('screen-cake');
+                s2.classList.replace('hidden', 'flex');
+                setTimeout(() => s2.style.opacity = '1', 50);
+            }, 2000);
+        }
+
+        function showMemoriesPage() {
+            // AUDIO LOGIC REQUESTED
+            document.getElementById("song1").pause();
+            document.getElementById("song1").currentTime = 0;
+            document.getElementById("song2").play();
+
+            document.getElementById('screen-cake').style.display = 'none';
+            const s3 = document.getElementById('screen-memories');
+            s3.classList.replace('hidden', 'flex');
+            setupCarousel();
+            setTimeout(() => s3.style.opacity = '1', 50);
+        }
+
+        function extinguish(el) { el.querySelector('.flame').style.display = 'none'; candlesBlown++; if(candlesBlown===3) document.getElementById('cake-main-instruction').innerText = "Now tap on the cake to cut it! 🎂"; }
+        function handleCakeInteraction() {
+            if (candlesBlown < 3) return;
+            const mc = document.getElementById('main-cake'), sl = document.getElementById('cake-slice'), inst = document.getElementById('cake-main-instruction');
+            if (!cakeIsCut) { mc.classList.add('cut'); cakeIsCut = true; inst.innerText = "Tap the slice 4 times to eat! 🍰"; }
+            else if (++biteCount <= 4) {
+                sl.classList.add(`bite-${biteCount}`);
+                if (biteCount < 4) inst.innerText = `Take another bite! (${4-biteCount} left) 🍴`;
+                else { inst.innerText = "Delicious! Happy New Year! ❤️"; document.getElementById('post-cake-container').classList.replace('opacity-0', 'opacity-100'); }
+            }
+        }
+
+        function setupCarousel() {
+            const container = document.getElementById('carousel'), r = 250;
+            container.innerHTML = '';
+            memories.forEach((m, i) => {
+                const item = document.createElement('div');
+                item.className = 'carousel-item';
+                item.style.transform = `rotateY(${i * (360/memories.length)}deg) translateZ(${r}px)`;
+                if (m.isGame) {
+                    item.innerHTML = `<div class='flex flex-col items-center justify-center h-full p-8 bg-pink-100 text-center'><p class='romantic-font text-2xl text-pink-600 mb-6'>Are you ready for the challenges?</p><button onclick='startKissGame()' class='bg-pink-500 text-white px-6 py-3 rounded-full font-bold shadow-md'>Start Game 💋</button></div>`;
+                } else {
+                    item.innerHTML = `
+                        <img src='${m.url}' onerror="this.src='https://via.placeholder.com/260x320?text=Memory+Image'">
+                        <div class="text-container text-center text-[10px] leading-tight italic text-gray-600">
+                            ${m.text.replace(/\n/g, "<br>")}
+                        </div>
+                    `;
+                }
+                container.appendChild(item);
+            });
+        }
+        function rotateCarousel(dir) { rotationAngle -= dir * (360/memories.length); document.getElementById('carousel').style.transform = `rotateY(${rotationAngle}deg)`; document.getElementById('slide-count').innerText = `${Math.abs(Math.round(rotationAngle / (360/memories.length)) % memories.length) + 1} / ${memories.length}`; }
+
+        let kissGameActive = false;
+        function startKissGame() {
+            document.getElementById('screen-memories').style.display = 'none';
+            document.getElementById('screen-kiss-game').classList.replace('hidden', 'block');
+            document.getElementById('master-scoreboard').classList.remove('hidden');
+            kissGameActive = true; spawnKiss();
+        }
+        window.addEventListener('pointermove', (e) => { if (kissGameActive) document.getElementById('glass').style.left = Math.max(0, Math.min(window.innerWidth - 100, e.clientX - 50)) + 'px'; });
+        function spawnKiss() {
+            if (!kissGameActive) return;
+            const k = document.createElement('div'); k.innerText = '💋'; k.style.position = 'absolute'; k.style.fontSize = '40px';
+            k.style.left = Math.random() * (window.innerWidth - 40) + 'px'; k.style.top = '0px';
+            document.getElementById('screen-kiss-game').appendChild(k);
+            let y = 0;
+            const inv = setInterval(() => {
+                y += 8; k.style.top = y + 'px';
+                const kr = k.getBoundingClientRect(), gr = document.getElementById('glass').getBoundingClientRect();
+                if (kr.bottom >= gr.top && kr.left >= gr.left && kr.right <= gr.right && kr.top <= gr.bottom) {
+                    kissScore += 5; document.getElementById('score-kiss').innerText = kissScore;
+                    clearInterval(inv); k.remove();
+                    if (kissScore >= 100) { kissGameActive = false; document.getElementById('kiss-win-popup').classList.add('popup-show'); }
+                }
+                if (y > window.innerHeight) { clearInterval(inv); k.remove(); }
+            }, 16);
+            setTimeout(spawnKiss, 800);
+        }
+        function resetKissGame() { kissScore=0; document.getElementById('score-kiss').innerText='0'; document.getElementById('kiss-win-popup').classList.remove('popup-show'); kissGameActive=true; spawnKiss(); }
+
+        let cuddleActive = false, cuddleScore = 0;
+        const canvas = document.getElementById('cuddle-canvas'), ctx = canvas.getContext('2d');
+        let cat = [{x: 10, y: 10}, {x: 10, y: 11}, {x: 10, y: 12}, {x: 10, y: 13}, {x: 10, y: 14}], hugObj = {x: 5, y: 5}, dx = 0, dy = -1;
+        function goToCuddleGame() {
+            document.getElementById('kiss-win-popup').classList.remove('popup-show');
+            document.getElementById('screen-kiss-game').style.display = 'none';
+            document.getElementById('screen-cuddle-game').classList.replace('hidden', 'flex');
+            canvas.width = window.innerWidth - 60; canvas.height = window.innerHeight / 3.4;
+            cuddleActive = true; spawnHug(); requestAnimationFrame(cLoop);
+        }
+        function setCuddleDir(d) { if (d==='UP'&&dy===0){dx=0;dy=-1;}if (d==='DOWN'&&dy===0){dx=0;dy=1;}if (d==='LEFT'&&dx===0){dx=-1;dy=0;}if (d==='RIGHT'&&dx===0){dx=1;dy=0;} }
+        function spawnHug() { hugObj = { x: Math.floor(Math.random()*(canvas.width/20)), y: Math.floor(Math.random()*(canvas.height/20)) }; }
+        let lastC = 0;
+        function cLoop(t) {
+            if (!cuddleActive) return;
+            if (t - lastC > 160) {
+                lastC = t;
+                const h = { x: cat[0].x + dx, y: cat[0].y + dy };
+                if (h.x<0)h.x=Math.floor(canvas.width/20)-1; if (h.x>=canvas.width/20)h.x=0; if (h.y<0)h.y=Math.floor(canvas.height/20)-1; if (h.y>=canvas.height/20)h.y=0;
+                cat.unshift(h);
+                if (h.x === hugObj.x && h.y === hugObj.y) {
+                    hugScore += 10; document.getElementById('score-hug').innerText = hugScore; spawnHug();
+                    if (hugScore >= 100) { cuddleActive = false; document.getElementById('cuddle-win-popup').classList.add('popup-show'); }
+                } else { cat.pop(); }
+            }
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.font = "20px Arial"; ctx.fillText("🫂", hugObj.x*20, hugObj.y*20+20);
+            cat.forEach((p,i) => ctx.fillText(i===0?"🐈":"❤️", p.x*20, p.y*20+20));
+            requestAnimationFrame(cLoop);
+        }
+        function resetCuddleGame() { hugScore=0; document.getElementById('score-hug').innerText='0'; document.getElementById('cuddle-win-popup').classList.remove('popup-show'); cat=[{x:10,y:10},{x:10,y:11},{x:10,y:12},{x:10,y:13},{x:10,y:14}]; dx=0; dy=-1; cuddleActive=true; spawnHug(); }
+
+        function goToSlapGame() { document.getElementById('cuddle-win-popup').classList.remove('popup-show'); document.getElementById('screen-cuddle-game').style.display = 'none'; document.getElementById('screen-slap-game').classList.replace('hidden', 'flex'); }
+        function processSlap() {
+            const b = document.getElementById('target-boy'); b.classList.add('slap-vfx'); setTimeout(() => b.classList.remove('slap-vfx'), 150);
+            if (slapCount < 3) {
+                slapCount++; document.getElementById('slap-display-count').innerText = slapCount;
+                if (slapCount === 1) b.innerText = "😟"; if (slapCount === 2) b.innerText = "🤕";
+                if (slapCount === 3) { b.innerText = "🩹"; b.classList.add('injured-3'); setTimeout(() => document.getElementById('slap-popup').classList.add('popup-show'), 500); }
+            } else { document.getElementById('slap-popup').classList.add('popup-show'); }
+        }
+
+        function payDualHealing() {
+            if (kissScore >= 10 && hugScore >= 10) {
+                kissScore -= 10; hugScore -= 10;
+                document.getElementById('score-kiss').innerText = kissScore; document.getElementById('score-hug').innerText = hugScore;
+                ['kiss','hug'].forEach(type => {
+                    const br = document.getElementById('master-scoreboard').getBoundingClientRect(), tr = document.getElementById('target-boy').getBoundingClientRect();
+                    for(let i=0; i<6; i++) {
+                        setTimeout(() => {
+                            const e = document.createElement('div'); e.className = 'spending-emoji'; e.innerText = type==='kiss'?'💋':'🫂';
+                            e.style.left = (br.left + 20) + 'px'; e.style.top = (br.top + (type==='kiss'?10:35)) + 'px'; document.body.appendChild(e);
+                            setTimeout(() => { e.style.left = (tr.left + tr.width/2 - 15) + 'px'; e.style.top = (tr.top + tr.height/2 - 15) + 'px'; e.style.opacity = '0'; }, 50);
+                            setTimeout(() => e.remove(), 850);
+                        }, i * 100);
+                    }
+                });
+                setTimeout(() => { slapCount = 0; document.getElementById('slap-display-count').innerText = "0"; document.getElementById('target-boy').innerText = "😊"; document.getElementById('target-boy').classList.remove('injured-3'); }, 1000);
+                document.getElementById('slap-popup').classList.remove('popup-show');
+            }
+        }
+
+        function goToFinalSurprise() { document.getElementById('slap-popup').classList.remove('popup-show'); document.getElementById('screen-slap-game').style.display = 'none'; document.getElementById('master-scoreboard').style.display = 'none'; const fin = document.getElementById('screen-final-surprise'); fin.classList.replace('hidden', 'flex'); setTimeout(() => fin.style.opacity = '1', 50); }
+        function revealRing() { document.getElementById('ring-box').classList.add('box-open'); document.getElementById('final-instruction').innerText = "Now tap the ring! 💍"; }
+        function showLetter(event) {
+            event.stopPropagation();
+            if (!document.getElementById('ring-box').classList.contains('box-open')) return;
+            document.getElementById('gift-initial').style.display = 'none';
+            document.getElementById('letter-reveal').classList.replace('hidden', 'flex');
+            launchConfetti();
+        }
+
+        function launchConfetti() {
+            for(let i=0; i<80; i++) {
+                const c = document.createElement('div');
+                c.style.position='fixed'; c.style.width='10px'; c.style.height='10px';
+                c.style.backgroundColor=['#ff8fa3','#ffd700','#ffffff','#f06292'][Math.floor(Math.random()*4)];
+                c.style.left=Math.random()*100+'vw'; c.style.top='-10px'; c.style.zIndex='1000';
+                document.body.appendChild(c);
+                c.animate([{top:'-10px',transform:'rotate(0deg)'},{top:'100vh',transform:`rotate(${Math.random()*720}deg)`}],{duration:2500,easing:'linear'});
+                setTimeout(()=>c.remove(),2500);
+            }
+        }
+    </script>
+</body>
+</html>
+
