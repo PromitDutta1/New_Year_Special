@@ -320,7 +320,7 @@
     <script>
         // HARD-CODED TARGET FOR NEW YEAR (JAN 1, 2026, 00:00:00)
         // Change this part only:
-const targetTime = new Date(2026, 0, 1, 0, 0, 0); 
+const targetTime = new Date(2026, 0, 1, 0, 0, 0).getTime();
 
         const baseImgUrl = "https://raw.githubusercontent.com/PromitDutta1/New_Year_Special/main/Images/";
         const memories = [
@@ -377,13 +377,15 @@ Because loving you feels like the one thing I was always meant to do. 💫❤️
         let isLocked = true;
 
         function updateTimer() {
-    const now = new Date();
+    const now = new Date().getTime(); // Add .getTime() here
 
     if (now >= targetTime) {
         document.getElementById('timer').innerText = "OPEN NOW! ❤️";
         isLocked = false;
-        return;   // ⛔ stop the timer permanently
+        return; 
     }
+    // ... rest of your code
+
 
     const diff = targetTime - now;
 
